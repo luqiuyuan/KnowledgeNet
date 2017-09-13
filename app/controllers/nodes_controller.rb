@@ -8,8 +8,14 @@ class NodesController < ApplicationController
   def index
     @nodes = Node.all
 
-    respond_to do |format|
-      format.json { render :index, status: :ok }
+    if @nodes.empty?
+      respond_to do |format|
+        format.json { head :not_found }
+      end
+    else
+      respond_to do |format|
+        format.json { render :index, status: :ok }
+      end
     end
   end
 

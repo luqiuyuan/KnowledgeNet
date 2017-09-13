@@ -28,6 +28,14 @@ class NodesControllerTest < ActionController::TestCase
     ]}, json_response)
   end
 
+  test "should return 404" do
+    Node.destroy_all
+
+    get :index, format: :json
+
+    assert_response :not_found
+  end
+
   #=================================
   # tests for POST nodes
   #=================================

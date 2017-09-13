@@ -37,6 +37,10 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # User active_model-errors_details that backports the feature from Rails 5
 gem 'active_model-errors_details'
 
+# use rack-cors gem to control cors access on test server
+# need to be removed on production server
+gem 'rack-cors', :require => 'rack/cors'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
@@ -49,4 +53,3 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 end
-
