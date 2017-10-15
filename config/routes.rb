@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
   defaults(format: :json) {
 
-    resources :nodes, only: [:index, :create]
+    resources :nodes, only: [:index, :create, :update]
 
   }
 

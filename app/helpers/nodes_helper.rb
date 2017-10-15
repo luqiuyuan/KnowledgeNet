@@ -8,4 +8,12 @@ module NodesHelper
 	params.require(:node).permit(:title, :text)
   end
 
+  def set_node
+  	@node = Node.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+  	respond_to do |format|
+      format.json { head :not_found }
+    end
+  end
+
 end

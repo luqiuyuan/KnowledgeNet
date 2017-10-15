@@ -75,4 +75,88 @@ class NodesControllerTest < ActionController::TestCase
     assert hash_included_unordered({errors:[{code:'invalid_field', field:'text'}]}, json_response)
   end
 
+  #=================================
+  # tests for PATCH / PUT nodes
+  #=================================
+
+  test "should update node" do
+    node = nodes(:one)
+
+    patch :update, format: :json, id: node.id, node: {title:"updated title", text:"updated text"}
+
+    assert_response :ok
+    assert_template :show
+    assert hash_included_unordered(
+      {
+        title: "updated title",
+        text: "updated text"
+      },
+      json_response['node']
+    )
+  end
+
+  test "should return status 404 if node of the id does not exist" do
+    patch :update, format: :json, id: 1234567
+  end
+
+  test "should return errors if param node is missing" do
+    node = nodes(:one)
+
+    patch :update, format: :json, id: node.id
+
+    assert_response :bad_request
+    assert_template 'shared/errors'
+    assert hash_included_unordered({errors:[{code:'missing_field', field:'node'}]}, json_response)
+  end
+
+  test "should return errors if param node is an empty hash" do
+    node = nodes(:one)
+
+    patch :update, format: :json, id: node.id, node: {}
+
+    assert_response :bad_request
+    assert_template 'shared/errors'
+    assert hash_included_unordered({errors:[{code:'missing_field', field:'node'}]}, json_response)
+  end
+
+  test "should not update node if title is too long" do
+    node = nodes(:one)
+
+    patch :update, format: :json, id: node.id, node: {title: "a"*(Node::TITLE_LENGTH_MAX+1)}
+
+    assert_response :bad_request
+    assert_template 'shared/errors'
+    assert hash_included_unordered({errors:[{code:'invalid_field', field:'title'}]}, json_response)
+  end
+
+  test "should not update node if text is too long" do
+    node = nodes(:one)
+
+    patch :update, format: :json, id: node.id, node: {text: "a"*(Node::TEXT_LENGTH_MAX+1)}
+
+    assert_response :bad_request
+    assert_template 'shared/errors'
+    assert hash_included_unordered({errors:[{code:'invalid_field', field:'text'}]}, json_response)
+  end
+
+  test "should not update node if title is empty string" do
+    node = nodes(:one)
+
+    patch :update, format: :json, id: node.id, node: {title: ""}
+
+    assert_response :bad_request
+    assert_template 'shared/errors'
+    assert hash_included_unordered({errors:[{code:'missing_field', field:'title'}]}, json_response)
+  end
+
+  test "should not update node if title is nil" do
+    node = nodes(:one)
+
+    patch :update, format: :json, id: node.id, node: {title: nil}
+
+    assert_response :bad_request
+    assert_template 'shared/errors'
+    assert hash_included_unordered({errors:[{code:'missing_field', field:'title'}]}, json_response)
+  end
+
 end

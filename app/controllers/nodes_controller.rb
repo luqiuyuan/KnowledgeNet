@@ -4,6 +4,8 @@ class NodesController < ApplicationController
 
   rescue_from ActionController::ParameterMissing, with: :parameter_missing
 
+  before_action :set_node, only: [:update]
+
   # GET /nodes
   def index
     @nodes = Node.all
@@ -25,6 +27,21 @@ class NodesController < ApplicationController
     if @node.save
       respond_to do |format|
         format.json { render 'show', status: :created }
+      end
+    else
+      @errors = translateModelErrors(@node)
+      respond_to do |format|
+        format.json { render template: 'shared/errors', status: :bad_request }
+      end
+    end
+  end
+
+  def update
+    @node.update(node_params)
+
+    if @node.save
+      respond_to do |format|
+        format.json { render 'show', status: :ok }
       end
     else
       @errors = translateModelErrors(@node)
